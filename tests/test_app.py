@@ -28,7 +28,7 @@ def test_post_with_markdown_content(client):
     })
     assert response.status_code == 200
     assert response.mimetype == 'application/epub+zip'  # EPUB file download response
-    os.remove("Test Heading.epub")
+    os.remove("uploads/Test-Heading.epub")
 
 
 def test_upload_folder_exists():

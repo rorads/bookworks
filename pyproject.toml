@@ -1,7 +1,7 @@
 [project]
-name = "md-publish"
+name = "bookworks"
 version = "0.1.0"
-description = "A command-line utility that processes Markdown files and converts them into properly formatted EPUB documents with enhanced readability and structure."
+description = "A suite of tools for converting and transforming books between different formats"
 authors = [
     {name = "Rory Scott",email = "rory09@gmail.com"}
 ]
@@ -9,7 +9,8 @@ license = {text = "GNU3"}
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "flask (>=3.1.0,<4.0.0)"
+    "flask (>=3.0.0,<4.0.0)",
+    "openai (>=1.66.0,<2.0.0)",
 ]
 
 [tool.poetry.group.dev.dependencies]

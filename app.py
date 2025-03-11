@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, send_file, flash
 import os
-from md_publish import process_markdown_content
+from bookworks.md_publish import process_markdown_content
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -33,6 +33,14 @@ def index():
         return send_file(output_file, as_attachment=True, download_name=os.path.basename(output_file))
 
     return render_template('index.html')
+
+@app.route('/audiobook')
+def audiobook():
+    return render_template('audiobook.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 if __name__ == '__main__':
     app.run(debug=True) 

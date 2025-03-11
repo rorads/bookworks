@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Generate Audiobook - Bookworks{% endblock %}
+
+{% block content %}
+<h1>Generate Audiobook</h1>
+
+<div class="under-construction">
+    <h2>🚧 Coming Soon! 🚧</h2>
+    
+    <p>We're working on an exciting new feature that will allow you to convert your markdown content into high-quality audiobooks. Here's what you'll be able to do:</p>
+    
+    <ul>
+        <li>Upload markdown files or paste content directly</li>
+        <li>Convert text into natural-sounding audio using advanced AI technology</li>
+        <li>Split audio into chapters based on markdown headings</li>
+        <li>Choose from different voice styles</li>
+        <li>Download individual chapter audio files or complete audiobook</li>
+        <li>Include proper chapter metadata in the audio files</li>
+    </ul>
+
+    <h3>Technical Details</h3>
+    <p>This feature will use OpenAI's Whisper technology to generate high-quality audio that sounds natural and engaging. The system will:</p>
+    <ul>
+        <li>Process markdown content in chunks for optimal audio quality</li>
+        <li>Maintain proper pacing and intonation</li>
+        <li>Handle complex formatting and special characters</li>
+        <li>Generate consistent voice throughout the book</li>
+    </ul>
+
+    <p>Check back soon for updates!</p>
+</div>
+
+<style>
+    .under-construction {
+        background: #fff3cd;
+        border: 1px solid #ffeeba;
+        padding: 2rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+    }
+    
+    .under-construction h2 {
+        color: #856404;
+        text-align: center;
+        margin-top: 0;
+    }
+    
+    .under-construction ul {
+        margin: 1rem 0;
+        padding-left: 2rem;
+    }
+    
+    .under-construction li {
+        margin: 0.5rem 0;
+        color: #555;
+    }
+</style>
+{% endblock %} 

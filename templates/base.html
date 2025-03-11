@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Markdown Publisher{% endblock %}</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            display: flex;
+        }
+        .sidebar {
+            width: 200px;
+            background: #2c3e50;
+            min-height: 100vh;
+            padding: 2rem 0;
+            color: white;
+            position: fixed;
+        }
+        .sidebar h2 {
+            padding: 0 1rem;
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: #ecf0f1;
+        }
+        .sidebar nav {
+            margin-top: 2rem;
+        }
+        .sidebar nav a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+        .sidebar nav a:hover {
+            background: #34495e;
+        }
+        .sidebar nav a.active {
+            background: #3498db;
+        }
+        .main-content {
+            flex: 1;
+            margin-left: 200px;
+            padding: 2rem;
+            max-width: 800px;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #34495e;
+            font-weight: 500;
+        }
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .flash {
+            padding: 1rem;
+            background: #e74c3c;
+            color: white;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Bookworks</h2>
+        <nav>
+            <a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}class="active"{% endif %}>EPUB Converter</a>
+            <a href="{{ url_for('audiobook') }}" {% if request.endpoint == 'audiobook' %}class="active"{% endif %}>Generate Audiobook</a>
+            <a href="{{ url_for('about') }}" {% if request.endpoint == 'about' %}class="active"{% endif %}>About</a>
+        </nav>
+    </div>
+    <div class="main-content">
+        <div class="container">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="flash">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html> 

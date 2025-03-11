@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}About - Bookworks{% endblock %}
+
+{% block content %}
+<h1>About Bookworks</h1>
+
+<p>Bookworks is a suite of tools for converting and transforming books between different formats. Currently offering EPUB conversion with audiobook generation coming soon. Created by Rory Scott.</p>
+
+<h2>Key Features</h2>
+<ul>
+    <li>Browser-based interface for easy file conversion</li>
+    <li>Command-line interface for automation and scripting</li>
+    <li>Multiple format conversions:
+        <ul>
+            <li>Markdown to EPUB with enhanced formatting</li>
+            <li>Markdown to Audiobook (coming soon)</li>
+        </ul>
+    </li>
+    <li>Enhanced EPUB features:
+        <ul>
+            <li>Fixes broken Markdown links that span multiple lines</li>
+            <li>Improves paragraph spacing for better readability</li>
+            <li>Creates proper chapter structure based on level-2 headings</li>
+            <li>Adds metadata (title, author, date)</li>
+            <li>Optional table of contents generation</li>
+        </ul>
+    </li>
+    <li>Debug mode for troubleshooting</li>
+    <li>Docker support for containerized deployment</li>
+    <li>Comprehensive test suite</li>
+</ul>
+
+<h2>How It Works</h2>
+<ol>
+    <li>The utility reads the input Markdown file (either through web upload or command line)</li>
+    <li>Processes the content based on the selected conversion:
+        <ul>
+            <li>For EPUB: Formats content, fixes links, adjusts spacing</li>
+            <li>For Audiobook: Splits content into optimal chunks, generates audio (coming soon)</li>
+        </ul>
+    </li>
+    <li>Generates the output file in the selected format with proper metadata</li>
+</ol>
+
+<h2>Requirements</h2>
+<h3>Local Development</h3>
+<ul>
+    <li>Python 3.10 or higher</li>
+    <li>Poetry for dependency management</li>
+    <li>Pandoc installed and available in PATH</li>
+</ul>
+
+<h3>Docker</h3>
+<ul>
+    <li>Docker installed on your system</li>
+    <li>No other dependencies needed</li>
+</ul>
+
+<p>This project is licensed under the GNU General Public License v3.0.</p>
+<p>Created and maintained by Rory Scott.</p>
+{% endblock %} 
