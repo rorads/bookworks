@@ -1,0 +1,18 @@
+[project]
+name = "md-publish"
+version = "0.1.0"
+description = "A command-line utility that processes Markdown files and converts them into properly formatted EPUB documents with enhanced readability and structure."
+authors = [
+    {name = "Rory Scott",email = "rory09@gmail.com"}
+]
+license = {text = "GNU3"}
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "flask (>=3.1.0,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
