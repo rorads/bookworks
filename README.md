@@ -31,7 +31,7 @@ A command-line utility that processes Markdown files and converts them into prop
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/md_publish.git
+git clone https://github.com/rorads/md_publish.git
 cd md_publish
 ```
 
@@ -46,7 +46,7 @@ poetry install
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/md_publish.git
+git clone https://github.com/rorads/md_publish.git
 cd md_publish
 ```
 
