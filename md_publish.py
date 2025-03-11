@@ -36,14 +36,20 @@ def process_markdown_content(content, author="Rory Scott", debug=False, toc=True
     # Add extra newline after paragraphs but not after headings
     modified_newlines = re.sub(r"([^\n])\n(?![\n#])", r"\1\n\n", modified_links)
     
-    # Create temporary files
-    with tempfile.NamedTemporaryFile(mode='w', suffix='_processed.md', delete=False) as temp_md:
-        temp_md.write(modified_newlines)
-        processed_md = temp_md.name
-    
     # Sanitize the title for use in filename
     safe_title = sanitize_filename(title)
     output_epub = f"{safe_title}.epub"
+    
+    # Create processed markdown file with a predictable name in debug mode
+    if debug:
+        processed_md = f"{safe_title}_processed.md"
+        with open(processed_md, 'w') as f:
+            f.write(modified_newlines)
+    else:
+        # Use temporary file in non-debug mode
+        with tempfile.NamedTemporaryFile(mode='w', suffix='_processed.md', delete=False) as temp_md:
+            temp_md.write(modified_newlines)
+            processed_md = temp_md.name
     
     # Generate the EPUB using pandoc
     command = [
@@ -73,9 +79,12 @@ def process_markdown_content(content, author="Rory Scott", debug=False, toc=True
         return None, error_msg
 
 def process_markdown_file(input_file, author="Rory Scott", debug=False, toc=True):
-    with open(input_file, 'r') as f:
-        content = f.read()
-    return process_markdown_content(content, author, debug, toc)
+    try:
+        with open(input_file, 'r') as f:
+            content = f.read()
+        return process_markdown_content(content, author, debug, toc)
+    except FileNotFoundError:
+        return None, f"Error: File '{input_file}' not found."
 
 if __name__ == "__main__":
     # Original CLI code remains unchanged
