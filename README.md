@@ -11,13 +11,23 @@ A command-line utility that processes Markdown files and converts them into prop
 - Generates a table of contents (optional)
 - Supports custom author attribution
 - Debug mode for troubleshooting
+- Docker support for containerized deployment
+- Comprehensive test suite
 
 ## Requirements
 
-- Python 3.6 or higher
+### Local Development
+- Python 3.10 or higher
+- Poetry for dependency management
 - Pandoc installed and available in PATH
 
+### Docker
+- Docker installed on your system
+- No other dependencies needed
+
 ## Installation
+
+### Using Poetry (Local Development)
 
 1. Clone this repository:
 ```bash
@@ -25,7 +35,69 @@ git clone https://github.com/yourusername/md_publish.git
 cd md_publish
 ```
 
-2. Ensure Pandoc is installed on your system. Installation instructions can be found at [pandoc.org](https://pandoc.org/installing.html).
+2. Install dependencies using Poetry:
+```bash
+poetry install
+```
+
+3. Ensure Pandoc is installed on your system. Installation instructions can be found at [pandoc.org](https://pandoc.org/installing.html).
+
+### Using Docker
+
+1. Clone this repository:
+```bash
+git clone https://github.com/yourusername/md_publish.git
+cd md_publish
+```
+
+2. Build and run using Make:
+```bash
+make docker-rebuild
+```
+
+The application will be available at http://localhost:5001
+
+## Docker Commands
+
+The following Make commands are available for Docker management:
+
+```bash
+make help           # Show available commands
+make docker-rebuild # Rebuild and restart the Docker container
+make docker-stop    # Stop and remove the Docker container
+make docker-logs    # View container logs in follow mode
+make test          # Run the test suite
+```
+
+## Testing
+
+The project includes a comprehensive test suite that covers both the command-line utility and the web interface. Tests are written using pytest and can be run using:
+
+```bash
+make test
+```
+
+### Test Coverage
+
+The test suite includes:
+- Web interface functionality tests
+- Markdown processing tests
+- File upload handling
+- EPUB generation
+- Error handling
+
+To run tests manually or with specific options:
+
+```bash
+# Run with Poetry directly
+poetry run pytest
+
+# Run specific test file
+poetry run pytest tests/test_app.py
+
+# Run with verbose output
+poetry run pytest -v
+```
 
 ## Usage
 
@@ -37,7 +109,7 @@ python md_publish.py input.md
 ### Command-line Options
 
 - `input_file`: The Markdown file to process
-- `--author`: Set custom author name (default: "Rory Scott")
+- `--author`: Set custom author name (default: "Author Not Specified")
 - `--debug`: Keep the processed markdown file after EPUB creation
 - `--no-toc`: Disable table of contents generation
 
