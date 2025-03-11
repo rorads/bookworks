@@ -4,10 +4,11 @@ FROM python:3.10-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies including pandoc
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     curl \
+    pandoc \
     && rm -rf /var/lib/apt/lists/*
 
 # Install poetry
