@@ -1,6 +1,20 @@
 import pytest
 import os
-from md_publish import sanitize_filename, process_markdown_content, process_markdown_file
+import shutil
+from bookworks.md_publish import sanitize_filename, process_markdown_content, process_markdown_file, UPLOAD_FOLDER
+
+@pytest.fixture(autouse=True)
+def setup_and_cleanup():
+    """Setup test environment and cleanup after each test"""
+    # Setup
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+    
+    yield
+    
+    # Cleanup
+    if os.path.exists(UPLOAD_FOLDER):
+        shutil.rmtree(UPLOAD_FOLDER)
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def test_sanitize_filename():
     """Test filename sanitization function"""
@@ -55,7 +69,7 @@ def test_process_markdown_content_no_title():
     content = "Just some content\nwithout a title"
     output_file, error = process_markdown_content(content)
     assert error is None
-    assert output_file == "Untitled Document.epub"
+    assert output_file == os.path.join(UPLOAD_FOLDER, "Untitled Document.epub")
     assert os.path.exists(output_file)
     os.remove(output_file)
 

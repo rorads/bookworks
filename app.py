@@ -1,11 +1,16 @@
 from flask import Flask, render_template, request, send_file, flash
 import os
-from bookworks.md_publish import process_markdown_content
+from bookworks.md_publish import process_markdown_content, UPLOAD_FOLDER
 from werkzeug.utils import secure_filename
+import logging
+
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = os.path.abspath('uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -24,13 +29,26 @@ def index():
         else:
             content = markdown_content
 
+        logger.debug(f"Processing markdown content with author: {author}")
         output_file, error = process_markdown_content(content, author=author)
         
         if error:
+            logger.error(f"Error processing markdown: {error}")
             flash(error)
             return render_template('index.html')
         
-        return send_file(output_file, as_attachment=True, download_name=os.path.basename(output_file))
+        if not output_file or not os.path.exists(output_file):
+            logger.error(f"Output file not found at {output_file}")
+            flash('Error: Output file was not created')
+            return render_template('index.html')
+            
+        logger.debug(f"Sending file: {output_file}")
+        try:
+            return send_file(output_file, as_attachment=True, download_name=os.path.basename(output_file))
+        finally:
+            # Clean up the file after sending
+            if os.path.exists(output_file):
+                os.remove(output_file)
 
     return render_template('index.html')
 
