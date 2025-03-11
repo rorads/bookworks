@@ -16,7 +16,7 @@ def sanitize_filename(title):
     sanitized = sanitized.strip('- ')
     return sanitized or "untitled"
 
-def process_markdown_content(content, author="Rory Scott", debug=False, toc=True):
+def process_markdown_content(content, author="Author Not Specified", debug=False, toc=True):
     # Extract the title from the first h1 heading
     title_match = re.search(r'^# (.*?)$', content, re.MULTILINE)
     title = title_match.group(1) if title_match else "Untitled Document"
@@ -78,7 +78,7 @@ def process_markdown_content(content, author="Rory Scott", debug=False, toc=True
             os.remove(output_epub)
         return None, error_msg
 
-def process_markdown_file(input_file, author="Rory Scott", debug=False, toc=True):
+def process_markdown_file(input_file, author="Author Not Specified", debug=False, toc=True):
     try:
         with open(input_file, 'r') as f:
             content = f.read()
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Create EPUB with default author (Rory Scott)
+  # Create EPUB with default author (Author Not Specified)
   python fix_spacing.py document.md
   
   # Create EPUB with custom author
@@ -108,7 +108,7 @@ Examples:
     )
     
     parser.add_argument("input_file", nargs="?", help="Input Markdown file to process")
-    parser.add_argument("--author", default="Rory Scott", help="Author name for EPUB metadata")
+    parser.add_argument("--author", default="Author Not Specified", help="Author name for EPUB metadata")
     parser.add_argument("--debug", action="store_true", help="Keep the processed markdown file")
     parser.add_argument("--no-toc", action="store_true", help="Disable table of contents generation")
     
