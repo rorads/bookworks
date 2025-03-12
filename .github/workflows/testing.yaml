@@ -26,7 +26,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry
           poetry install
-
+      - name: Install Pandoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc
       - name: Run Tests
         run: make test
 
