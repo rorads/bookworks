@@ -1,7 +1,12 @@
+"""
+Tests for the markdown to epub conversion functionality.
+"""
+
 import pytest
 import os
 import shutil
-from bookworks.md_publish import sanitize_filename, process_markdown_content, process_markdown_file, UPLOAD_FOLDER
+from bookworks.bw_utils import sanitize_filename
+from bookworks.md_publish import process_markdown_content, process_markdown_file, UPLOAD_FOLDER
 
 @pytest.fixture(autouse=True)
 def setup_and_cleanup():
@@ -36,7 +41,7 @@ def test_sanitize_filename():
     assert sanitize_filename("---") == "untitled"
 
 def test_process_markdown_content_basic():
-    """Test basic markdown processing"""
+    """Test basic markdown to epub conversion"""
     content = """# Test Title
 This is a paragraph.
 Another line in the same paragraph.
@@ -49,7 +54,7 @@ Another line in the same paragraph.
     assert error is None
     assert output_file.endswith(".epub")
     assert os.path.exists(output_file)
-    os.remove(output_file)  # Clean up
+    os.remove(output_file)
 
 def test_process_markdown_content_links():
     """Test markdown processing with multi-line links"""
@@ -74,7 +79,7 @@ def test_process_markdown_content_no_title():
     os.remove(output_file)
 
 def test_process_markdown_content_with_options():
-    """Test markdown processing with different options"""
+    """Test epub conversion with different options"""
     content = """# Test Options
 ## Section 1
 Content 1
@@ -117,7 +122,7 @@ This is a test file.
     return str(file_path)
 
 def test_process_markdown_file(temp_markdown_file):
-    """Test processing a markdown file"""
+    """Test processing a markdown file to epub"""
     output_file, error = process_markdown_file(temp_markdown_file, author="Test Author")
     assert error is None
     assert output_file.endswith(".epub")
