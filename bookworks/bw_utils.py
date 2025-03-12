@@ -16,12 +16,6 @@ def epub_to_markdown(epub_path: str) -> str:
     """
     pass
 
-def markdown_to_epub(markdown_path: str, epub_path: str) -> None:
-    """
-    Convert a Markdown file to an EPUB file. This is primarily a wrapper around the pandoc command.
-    """
-    pass
-
 
 def sanitize_filename(title: str) -> str:
     """

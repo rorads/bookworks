@@ -17,7 +17,3 @@ echo "Starting new container..."
 docker run -d -p 5001:5000 --name md-publish-container md-publish
 
 echo "Done! Application should be available at http://localhost:5001"
-
-# Show logs
-echo "Container logs:"
-docker logs md-publish-container 
