@@ -18,4 +18,4 @@ docker-logs:
 	docker logs -f md-publish-container
 
 test:
-	poetry run pytest -v 
+	uv run -m pytest -v 

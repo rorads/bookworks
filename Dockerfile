@@ -1,30 +1,26 @@
 # Use Python 3.10 slim image as base
-FROM python:3.10-slim
+FROM python:3.10-slim-bookworm
+
+# Install uv
+COPY --from=ghcr.io/astral-sh/uv:0.6.6 /uv /uvx /bin/
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies including pandoc
+# Install system dependencies including pandoc and build essentials
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     curl \
     pandoc \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Install poetry
-RUN curl -sSL https://install.python-poetry.org | python3 -
 
-# Copy poetry files
-COPY pyproject.toml poetry.lock ./
-
-# Copy application files
+# Copy project files
 COPY . .
 
-# Configure poetry to not create a virtual environment
-ENV POETRY_VIRTUALENVS_CREATE=false
-
-# Install dependencies
-RUN /root/.local/bin/poetry install --no-interaction --no-ansi
+# Install dependencies via uv
+RUN uv sync --frozen
 
 # Expose port 5000
 EXPOSE 5000
@@ -34,4 +30,4 @@ ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
 
 # Run the application
-CMD ["/root/.local/bin/poetry", "run", "python", "-m", "flask", "run", "--host=0.0.0.0"] 
+CMD ["uv", "run", "python", "-m", "flask", "run", "--host=0.0.0.0"]
