@@ -3,3 +3,12 @@ __pycache__/
 .pytest_cache/
 experiments/output/markdown/*
 output/*
+
+# Python packaging
+*.egg-info/
+dist/
+build/
+__pycache__/
+*.py[cod]
+*$py.class
+.eggs/

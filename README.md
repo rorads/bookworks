@@ -32,7 +32,7 @@ A versatile suite of tools for converting and transforming books between differe
 
 ### Local Development
 - Python 3.10 or higher
-- Poetry for dependency management
+- uv for dependency management
 - Pandoc installed and available in PATH
 
 ### Docker
@@ -41,7 +41,7 @@ A versatile suite of tools for converting and transforming books between differe
 
 ## Installation
 
-### Using Poetry (Local Development)
+### Using uv (Local Development)
 
 1. Clone this repository:
 ```bash
@@ -49,12 +49,17 @@ git clone https://github.com/rorads/bookworks.git
 cd bookworks
 ```
 
-2. Install dependencies using Poetry:
+2. Install uv:
 ```bash
-poetry install
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-3. Ensure Pandoc is installed on your system. Installation instructions can be found at [pandoc.org](https://pandoc.org/installing.html).
+3. Install dependencies using uv:
+```bash
+uv sync
+```
+
+4. Ensure Pandoc is installed on your system. Installation instructions can be found at [pandoc.org](https://pandoc.org/installing.html).
 
 ### Using Docker
 
@@ -103,14 +108,14 @@ The test suite includes:
 To run tests manually or with specific options:
 
 ```bash
-# Run with Poetry directly
-poetry run pytest
+# Run with uv directly
+uv run -m pytest
 
 # Run specific test file
-poetry run pytest tests/test_app.py
+uv run -m pytest tests/test_app.py
 
 # Run with verbose output
-poetry run pytest -v
+uv run -m pytest -v
 ```
 
 ## Usage
@@ -119,7 +124,7 @@ poetry run pytest -v
 
 Basic usage:
 ```bash
-python -m bookworks.md_publish input.md
+uv run python -m bookworks.md_publish input.md
 ```
 
 #### Command-line Options
@@ -133,22 +138,22 @@ python -m bookworks.md_publish input.md
 
 1. Create EPUB with default settings:
 ```bash
-python -m bookworks.md_publish document.md
+uv run python -m bookworks.md_publish document.md
 ```
 
 2. Create EPUB with custom author:
 ```bash
-python -m bookworks.md_publish document.md --author "John Smith"
+uv run python -m bookworks.md_publish document.md --author "John Smith"
 ```
 
 3. Create EPUB without table of contents:
 ```bash
-python -m bookworks.md_publish document.md --no-toc
+uv run python -m bookworks.md_publish document.md --no-toc
 ```
 
 4. Keep processed markdown file for debugging:
 ```bash
-python -m bookworks.md_publish document.md --debug
+uv run python -m bookworks.md_publish document.md --debug
 ```
 
 ### Audiobook Generation

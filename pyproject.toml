@@ -15,12 +15,16 @@ dependencies = [
     "markdown (>=3.7,<4.0)",
     "html2text (>=2024.2.26,<2025.0.0)",
     "markdown-it-py (>=3.0.0,<4.0.0)",
+    "pytest>=8.3.5",
 ]
+
+[tool.setuptools]
+packages = ["bookworks"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.0.0"
 pytest-flask = "^1.3.0"
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
