@@ -6,7 +6,6 @@ while preserving the actual content and chapter structure.
 """
 
 import re
-import os
 from pathlib import Path
 
 # Define the input and output directories

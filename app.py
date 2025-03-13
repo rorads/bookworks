@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, send_file, flash
 import os
 from bookworks.md_publish import process_markdown_content, UPLOAD_FOLDER
-from werkzeug.utils import secure_filename
 import logging
 
 # Set up logging
@@ -10,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
-UPLOAD_FOLDER = os.path.abspath('uploads')
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/', methods=['GET', 'POST'])

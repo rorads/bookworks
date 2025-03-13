@@ -2,9 +2,7 @@
 Tests for the bookworks utility functions.
 """
 
-import pytest
 import os
-import tempfile
 from bookworks.bw_utils import (
     sanitize_filename,
     clean_markdown_content,

@@ -2,7 +2,6 @@
 Utility functions for bookworks.
 """
 
-import os
 import re
 import tempfile
 import subprocess
