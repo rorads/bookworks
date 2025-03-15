@@ -1,0 +1,6 @@
+---
+description: Whenever doing anything with python, use uv
+globs: .py, .ipynb
+alwaysApply: false
+---
+We use uv as the solution for python, so remember to run scripts using `uv run` or equivalent. Similarly if you're going to install a new library, do this using `uv add` and use the utility canonically.
