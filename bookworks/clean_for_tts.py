@@ -25,7 +25,7 @@ def process_file(
     book_title: Optional[str] = None,
     split_chapters: bool = False,
     max_chars: int = 3000,
-):
+) -> list[str]:
     # Check if file is EPUB and convert to markdown if needed
     file_ext = os.path.splitext(input_file)[1].lower()
     if file_ext == ".epub":

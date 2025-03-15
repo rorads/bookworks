@@ -29,7 +29,7 @@ chapters_dir.mkdir(parents=True, exist_ok=True)
 chunked_chapters_dir.mkdir(parents=True, exist_ok=True)
 
 
-def clean_markdown_for_tts(content):
+def clean_markdown_for_tts(content: str) -> str:
     """
     Clean markdown content to make it suitable for TTS reading.
 
@@ -124,7 +124,7 @@ def clean_markdown_for_tts(content):
     return content.strip()
 
 
-def split_by_chapters(content, book_title):
+def split_by_chapters(content: str, book_title: str) -> list[dict]:
     """
     Split the markdown content into chapters based on header patterns.
 
@@ -167,8 +167,8 @@ def split_by_chapters(content, book_title):
 
 
 def chunk_chapter_content(
-    chapter_content, max_size=MAX_CHUNK_SIZE, min_size=MIN_CHUNK_SIZE
-):
+    chapter_content: str, max_size: int = MAX_CHUNK_SIZE, min_size: int = MIN_CHUNK_SIZE
+) -> list[str]:
     """
     Split chapter content into smaller chunks based on paragraph and sentence boundaries.
 

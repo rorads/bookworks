@@ -81,7 +81,7 @@ def clean_markdown_content(content: str) -> Tuple[str, Dict[str, Any]]:
     content = content.replace("\r\n", "\n")
 
     # Fix multi-line links by first finding all link patterns
-    def clean_link(match):
+    def clean_link(match: re.Match[str]) -> str:
         text = match.group(1)
         url = match.group(2)
         # Clean the link text by replacing newlines and multiple spaces with a single space
