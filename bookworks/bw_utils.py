@@ -15,13 +15,23 @@ def epub_to_markdown(epub_path: str) -> str:
     However, it also handles some additional cleanup of the markdown output.
 
     """
-    with tempfile.NamedTemporaryFile(suffix='.md', delete=False) as temp_md_file:
+    with tempfile.NamedTemporaryFile(suffix=".md", delete=False) as temp_md_file:
         temp_md_path = temp_md_file.name
-    
+
     try:
-        cmd = ['pandoc', epub_path, '-f', 'epub', '-t', 'markdown', '-o', temp_md_path, '--wrap=none']
+        cmd = [
+            "pandoc",
+            epub_path,
+            "-f",
+            "epub",
+            "-t",
+            "markdown",
+            "-o",
+            temp_md_path,
+            "--wrap=none",
+        ]
         subprocess.run(cmd, check=True)
-        with open(temp_md_path, 'r', encoding='utf-8') as f:
+        with open(temp_md_path, "r", encoding="utf-8") as f:
             content = f.read()
         os.unlink(temp_md_path)  # Delete the temporary file
         return content
@@ -157,78 +167,82 @@ def create_temp_workspace() -> tempfile.TemporaryDirectory:
 
 def clean_markdown_for_tts(content: str) -> str:
     """Clean markdown content to make it suitable for TTS reading.
-    
+
     This function should remove extra markdown/HTML markup (e.g. markdown ID references,
     HTML blocks, extra attributes, and formatting markers) as tested in our experiments.
-    
+
     Args:
         content (str): The raw markdown content.
-    
+
     Returns:
         str: The cleaned, TTS-ready markdown content.
     """
     # Remove markdown ID references like []{#title_page.xhtml}
     content = re.sub(r"\[\]\{#[^}]+\}", "", content)
-    
+
     # Remove HTML blocks (e.g., blocks like ```{=html} ... ```)
     content = re.sub(r"```\{=html\}[\s\S]*?```", "", content)
-    
+
     # Remove section formatting (e.g. ::: {attributes} etc.)
     content = re.sub(r"::: \{[^}]+\}", "", content)
     content = re.sub(r":::.*", "", content)
-    
+
     # Clean up headings by stripping out attributes (keeping the heading text)
     content = re.sub(r"(#+ .*?) \{[^}]+\}", r"\1", content)
-    
+
     # Remove image references as in the experiments
     content = re.sub(r"!\[\]\([^)]+\)", "", content)
     content = re.sub(r"\{\.x-ebookmaker-cover\}", "", content)
-    
+
     # Remove HTML IDs in brackets and inline IDs (e.g. {#id})
     content = re.sub(r"\{\#[^}]+\}", "", content)
-    
+
     # Remove attributes in square brackets (e.g. [text]{...})
     content = re.sub(r"\[.*?\]\{[^}]+\}", "", content)
-    
+
     # Remove language attributes
     content = re.sub(r"lang=\"[^\"]+\"", "", content)
-    
+
     # Convert links to only display text (strip the URL)
     content = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", content)
-    
+
     # Remove HTML tags entirely
     content = re.sub(r"<[^>]+>", "", content)
-    
+
     # Remove any remaining attributes within curly braces
     content = re.sub(r"\{[^}]+\}", "", content)
-    
+
     # Convert formatting (like **bold**, *italic*, __bold__, _italic_) to plain text
     content = re.sub(r"\*\*([^*]+)\*\*", r"\1", content)
     content = re.sub(r"\*([^*]+)\*", r"\1", content)
     content = re.sub(r"__([^_]+)__", r"\1", content)
     content = re.sub(r"_([^_]+)_", r"\1", content)
-    
+
     # Remove reference-style links (e.g. [^something])
     content = re.sub(r"\[\^[^\]]+\]", "", content)
-    
+
     # Clean up navigation markers (e.g. numbers or bullets at line starts)
     content = re.sub(r"^\d+\.\s+", "", content, flags=re.MULTILINE)
-    
+
     # Remove backslashes used for escaping
     content = re.sub(r"\\([\\`*_{}\[\]()#+\-.!])", r"\1", content)
-    
+
     # Remove multiple backslashes (like \\\\)
     content = re.sub(r"\\{2,}", "", content)
-    
+
     # Remove Project Gutenberg boilerplate markers
-    content = re.sub(r"START OF THE PROJECT GUTENBERG EBOOK.*", "", content, flags=re.IGNORECASE)
-    content = re.sub(r"END OF THE PROJECT GUTENBERG EBOOK.*", "", content, flags=re.IGNORECASE)
-    
+    content = re.sub(
+        r"START OF THE PROJECT GUTENBERG EBOOK.*", "", content, flags=re.IGNORECASE
+    )
+    content = re.sub(
+        r"END OF THE PROJECT GUTENBERG EBOOK.*", "", content, flags=re.IGNORECASE
+    )
+
     # Clean up excessive blank lines and extra spaces
     content = re.sub(r"\\$", "", content, flags=re.MULTILINE)
     content = re.sub(r"  +", " ", content)
     content = re.sub(r"\n{3,}", "\n\n", content)
-    
+
     return content.strip()
 
 
@@ -245,7 +259,11 @@ def split_by_chapters(content: str, book_title: str) -> list:
     for i, match in enumerate(chapter_matches):
         chapter_start = match.start()
         chapter_title = match.group(1).strip()
-        chapter_end = chapter_matches[i + 1].start() if i < len(chapter_matches) - 1 else len(content)
+        chapter_end = (
+            chapter_matches[i + 1].start()
+            if i < len(chapter_matches) - 1
+            else len(content)
+        )
         chapter_content = content[chapter_start:chapter_end].strip()
         chapters.append({"title": chapter_title, "content": chapter_content})
     return chapters

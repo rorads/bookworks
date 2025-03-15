@@ -15,6 +15,7 @@ This is a test. []{#test}
 **Bold Text**
 """
 
+
 def test_clean_markdown_for_tts():
     cleaned = clean_markdown_for_tts(SAMPLE_INPUT)
     # Assert that HTML blocks and markdown identifiers have been removed
@@ -44,14 +45,13 @@ def test_clean_for_tts_integration(tmp_path):
 
     # Run the clean_for_tts.py script using subprocess
     # Note: We assume the current working directory is the project root
-    cmd = [
-        'python', '-m', 'bookworks.clean_for_tts',
-        str(input_file)
-    ]
+    cmd = ["python", "-m", "bookworks.clean_for_tts", str(input_file)]
     result = subprocess.run(cmd, capture_output=True, text=True)
-    
+
     # Check that the script ran successfully
-    assert result.returncode == 0, f"Script failed with output: {result.stdout}\nError: {result.stderr}"
+    assert result.returncode == 0, (
+        f"Script failed with output: {result.stdout}\nError: {result.stderr}"
+    )
 
     # The output file should be created in output/tts-ready-markdown directory
     output_dir = os.path.abspath("output/tts-ready-markdown")
@@ -59,10 +59,12 @@ def test_clean_for_tts_integration(tmp_path):
     expected_output_file = os.path.join(output_dir, "sample_tts.md")
 
     # Check that the output file exists
-    assert os.path.exists(expected_output_file), f"Expected output file {expected_output_file} not found."
+    assert os.path.exists(expected_output_file), (
+        f"Expected output file {expected_output_file} not found."
+    )
 
     # Optionally, check that the cleaned content does not contain unwanted substrings
     with open(expected_output_file, "r", encoding="utf-8") as f:
         cleaned_content = f.read()
     assert "```{=html}" not in cleaned_content
-    assert "{#test}" not in cleaned_content 
+    assert "{#test}" not in cleaned_content
