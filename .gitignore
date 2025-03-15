@@ -3,6 +3,7 @@ __pycache__/
 .pytest_cache/
 experiments/output/markdown/*
 output/*
+.env
 
 # Python packaging
 *.egg-info/

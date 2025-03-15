@@ -3,19 +3,50 @@ This script cleans markdown files for better TTS reading.
 
 It removes various markdown and HTML markup that would interfere with TTS reading,
 while preserving the actual content and chapter structure.
+
+It can also split long chapters into smaller chunks for better TTS processing.
 """
 
 import re
+import argparse
 from pathlib import Path
+
+# Parse command-line arguments
+parser = argparse.ArgumentParser(
+    description="Clean markdown files for TTS reading and split into chapters."
+)
+parser.add_argument(
+    "--max-chunk-size",
+    type=int,
+    default=0,
+    help="Maximum size of each chunk in characters. Set to 0 to disable chunking (default), or try values like 5000-10000.",
+)
+parser.add_argument(
+    "--min-chunk-size",
+    type=int,
+    default=1000,
+    help="Minimum size for a chunk to be considered valid.",
+)
+args = parser.parse_args()
 
 # Define the input and output directories
 input_dir = Path("output/markdown")
 output_dir = Path("output/clean-markdown-for-tts")
 chapters_dir = Path("output/tts-ready-chapters")
+chunked_chapters_dir = Path("output/tts-ready-chapters-chunks")
 
 # Create the output directories if they don't exist
 output_dir.mkdir(parents=True, exist_ok=True)
 chapters_dir.mkdir(parents=True, exist_ok=True)
+
+# Only create chunked chapters directory if chunking is enabled
+if args.max_chunk_size > 0:
+    chunked_chapters_dir.mkdir(parents=True, exist_ok=True)
+    print(f"Chunking enabled with max chunk size: {args.max_chunk_size} characters")
+else:
+    print(
+        "Chunking disabled. Use --max-chunk-size to enable (recommended values: 5000-10000)"
+    )
 
 
 def clean_markdown_for_tts(content):
@@ -155,9 +186,95 @@ def split_by_chapters(content, book_title):
     return chapters
 
 
+def chunk_chapter_content(
+    chapter_content, max_size=args.max_chunk_size, min_size=args.min_chunk_size
+):
+    """
+    Split chapter content into smaller chunks based on paragraph and sentence boundaries.
+
+    Args:
+        chapter_content (str): The chapter content to split
+        max_size (int): Maximum size of each chunk in characters
+        min_size (int): Minimum size for a chunk to be considered valid
+
+    Returns:
+        list: A list of content chunks
+    """
+    # If chunking is disabled or content is already smaller than max_size, return it as a single chunk
+    if max_size <= 0 or len(chapter_content) <= max_size:
+        return [chapter_content]
+
+    # Split content into paragraphs (double newlines)
+    paragraphs = re.split(r"\n\n+", chapter_content)
+
+    chunks = []
+    current_chunk = ""
+
+    # Process each paragraph
+    for paragraph in paragraphs:
+        # If adding this paragraph would exceed max_size and we already have content
+        if (
+            len(current_chunk) + len(paragraph) + 2 > max_size
+            and len(current_chunk) >= min_size
+        ):
+            # Add current chunk to chunks list
+            chunks.append(current_chunk.strip())
+            current_chunk = paragraph
+        else:
+            # Add paragraph to current chunk
+            if current_chunk:
+                current_chunk += "\n\n" + paragraph
+            else:
+                current_chunk = paragraph
+
+    # Add the final chunk if it's not empty
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+
+    # If any chunk is still too large, split it further at sentence boundaries
+    final_chunks = []
+    for chunk in chunks:
+        if len(chunk) > max_size:
+            # Try to split at sentence boundaries
+            sentences = re.split(r"(?<=[.!?])\s+", chunk)
+
+            temp_chunk = ""
+            for sentence in sentences:
+                if (
+                    len(temp_chunk) + len(sentence) + 1 > max_size
+                    and len(temp_chunk) >= min_size
+                ):
+                    final_chunks.append(temp_chunk.strip())
+                    temp_chunk = sentence
+                else:
+                    if temp_chunk:
+                        temp_chunk += " " + sentence
+                    else:
+                        temp_chunk = sentence
+
+            if temp_chunk:
+                final_chunks.append(temp_chunk.strip())
+        else:
+            final_chunks.append(chunk)
+
+    return final_chunks
+
+
 # Process each markdown file
-for md_file in input_dir.glob("*.md"):
+print(f"Looking for markdown files in {input_dir}")
+md_files = list(input_dir.glob("*.md"))
+print(f"Found {len(md_files)} markdown files")
+
+# Initialize counters for summary
+total_books = 0
+total_chapters = 0
+total_chunks = 0
+
+for md_file in md_files:
     try:
+        print(f"\nProcessing {md_file}...")
+        total_books += 1
+
         # Read the markdown content
         with open(md_file, "r", encoding="utf-8") as f:
             content = f.read()
@@ -177,10 +294,16 @@ for md_file in input_dir.glob("*.md"):
         # Split the content into chapters
         book_title = md_file.stem
         chapters = split_by_chapters(cleaned_content, book_title)
+        chapter_count = len(chapters)
+        total_chapters += chapter_count
+        print(f"Split {md_file.name} into {chapter_count} chapters")
 
         # Create a directory for this book's chapters
         book_chapter_dir = chapters_dir / book_title
         book_chapter_dir.mkdir(exist_ok=True)
+
+        # Initialize book chunks counter
+        book_chunks = 0
 
         # Save each chapter to a separate file
         for i, chapter in enumerate(chapters, 1):
@@ -196,15 +319,64 @@ for md_file in input_dir.glob("*.md"):
             with open(chapter_file, "w", encoding="utf-8") as f:
                 f.write(chapter["content"])
 
-            print(f"  - Chapter {i}: {chapter['title']} saved to {chapter_file}")
+            chapter_length = len(chapter["content"])
+            print(f"  - Chapter {i}: {chapter['title']} ({chapter_length} chars)")
 
-        print(f"Split {len(chapters)} chapters from {md_file.name}")
+            # Skip chunking if disabled
+            if args.max_chunk_size <= 0:
+                continue
+
+            # Process chunking if enabled
+            # Split chapter into chunks
+            chunks = chunk_chapter_content(chapter["content"])
+
+            # Skip if only one chunk (same as original)
+            if len(chunks) <= 1:
+                continue
+
+            # Create directory for chunked chapters if it doesn't exist
+            book_chunked_chapter_dir = chunked_chapters_dir / book_title
+            book_chunked_chapter_dir.mkdir(exist_ok=True)
+
+            # Save each chunk to a separate file
+            print(f"    - Splitting chapter {i} into {len(chunks)} chunks")
+            for j, chunk_content in enumerate(chunks, 1):
+                chunk_filename = f"{i:02d}_{j:02d}_{chapter_title[:40]}.md"
+                chunk_file = book_chunked_chapter_dir / chunk_filename
+
+                with open(chunk_file, "w", encoding="utf-8") as f:
+                    f.write(chunk_content)
+
+                print(f"      - Chunk {j}: {len(chunk_content)} chars")
+
+            book_chunks += len(chunks)
+
+        total_chunks += book_chunks
+
+        # Print chunking info if enabled
+        if args.max_chunk_size > 0 and book_chunks > 0:
+            print(
+                f"Created {book_chunks} chunks from {chapter_count} chapters for {book_title}"
+            )
 
     except Exception as e:
         print(f"Error processing {md_file.name}: {e}")
 
-print(f"Cleaned markdown files saved to {output_dir}")
+# Print summary
+print("\n" + "=" * 50)
+print("SUMMARY:")
+print(f"  - Processed {total_books} books")
+print(f"  - Created {total_chapters} chapter files")
+if args.max_chunk_size > 0 and total_chunks > 0:
+    print(f"  - Created {total_chunks} chunk files")
+print("=" * 50)
+
+print(f"\nCleaned markdown files saved to {output_dir}")
 print(f"TTS-ready chapter files saved to {chapters_dir}")
+
+# Print chunked chapters info if enabled
+if args.max_chunk_size > 0:
+    print(f"TTS-ready chunked chapter files saved to {chunked_chapters_dir}")
 
 # Print a small sample of one file for inspection
 sample_files = list(output_dir.glob("*.md"))

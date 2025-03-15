@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, send_file, flash
 import os
 from bookworks.md_publish import process_markdown_content, UPLOAD_FOLDER
 import logging
+from typing import Any
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -14,7 +15,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 @app.route("/", methods=["GET", "POST"])
-def index():
+def index() -> Any:
     if request.method == "POST":
         markdown_content = request.form.get("markdown_content")
         uploaded_file = request.files.get("markdown_file")
@@ -58,12 +59,12 @@ def index():
 
 
 @app.route("/audiobook")
-def audiobook():
+def audiobook() -> Any:
     return render_template("audiobook.html")
 
 
 @app.route("/about")
-def about():
+def about() -> Any:
     return render_template("about.html")
 
 

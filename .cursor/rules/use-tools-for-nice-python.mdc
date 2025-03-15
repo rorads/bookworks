@@ -1,0 +1,16 @@
+---
+description: check your python using ruff and mypy
+globs: .py
+alwaysApply: false
+---
+Whenever you're writing python, be sure to make sure the python you write is correct and well written.
+
+You can do this by calling:
+
+`ruff check <the file you just edited dot py>`
+
+and
+
+`mypy <the file you just edited dot py --follow-imports skip`
+
+If you're keen to ensure you're file integrates well, you can run `mypy .` but know that you might be shown issues which aren't a direct result of your work. (This shouldn't be the case in a well maintained repo, but it could happen). If this is the case, simply alert your user but don't go on a detour to fix unles explicitly asked.

@@ -1,0 +1,7 @@
+---
+description: When running experiments or conducting analysis, don't write long output within code files.
+globs: 
+alwaysApply: false
+---
+
+You might be tempted to write lots of print statements when running an analysis which calls for rigorous code as part of it. Don't do it. Instead, write a file which will output all the information you will need to write a markdown file directly, or to convey back to the user.
