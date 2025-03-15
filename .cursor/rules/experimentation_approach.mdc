@@ -1,0 +1,14 @@
+---
+description: Ways of working when asked to undertake experimentation
+globs: 
+alwaysApply: false
+---
+When running experiments, keep a record of your work and analysis by adding a folder to [experiments/](experiments/), or by adding a folder to an existing subdirectory.
+
+For instance, if you were asked to investigate methods to automatically generate flashcards using Anki from EPUB files, you would create a new folder in experiments called something like `experiments/anki_deck_gen`.
+
+**Very Important**: You should set out your aims and approaches in a markdown file and present this to the user and ask whether to proceed. This is essential to stop you from going ahead with large tasks.
+
+Within the markdown file, create a plan for all the files you're going to create and where, as well as what your measures for success will be, including any hypotheses you're going to test.
+
+As a general rule, you should try not to create many new files, and if you do, make sure they are entirely contained within the given experimentation directory you've made. (When you're testing existing code which already has side-effects, that's fine).
