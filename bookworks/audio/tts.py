@@ -1,44 +1,104 @@
 """
-Text-to-speech processing utilities.
+Text-to-speech processing utilities for bookworks.
 """
 
-from pathlib import Path
+import os
+import re
 from typing import List, Dict
 
-from ..core import ContentProcessor
+from ..core import ProcessingResult
+from ..text.processors import TTSPreprocessor, ChapterSplitter
+from ..utils.filesystem import sanitize_filename
 
 
-class TTSProcessor(ContentProcessor):
+class TTSProcessor:
     """Process text content into audio using text-to-speech."""
 
-    def process(self, content: str) -> str:
+    def __init__(self, output_dir: str):
         """
-        Convert text content to audio using TTS.
+        Initialize TTSProcessor.
 
         Args:
-            content: Text content to convert
+            output_dir: Directory to save audio files
+        """
+        self.output_dir = output_dir
+        self.preprocessor = TTSPreprocessor()
+        self.chapter_splitter = ChapterSplitter()
+
+    def process(self, content: str, book_title: str) -> ProcessingResult:
+        """
+        Process content into audio files.
+
+        Args:
+            content: Raw markdown content
+            book_title: Title of the book
 
         Returns:
-            Path to the generated audio file
+            ProcessingResult with status and output files
         """
-        # TODO: Implement TTS processing
-        return ""
+        # Placeholder for actual TTS processing
+        return "", None
 
-    def process_chapters(
-        self, chapters: List[Dict[str, str]], output_dir: Path
-    ) -> List[Path]:
+    def prepare_content(self, content: str, book_title: str) -> List[Dict[str, str]]:
+        """
+        Clean content and split into chapters for TTS processing.
+
+        Args:
+            content: Raw markdown content
+            book_title: Title of the book
+
+        Returns:
+            List of dictionaries containing chapter info and file paths
+        """
+        # Clean the content
+        cleaned_content = self.preprocessor.process(content)
+
+        # Split into chapters
+        chapters = self.chapter_splitter.split_chapters(cleaned_content, book_title)
+
+        # Skip first chapter if it's empty or just contains the book title
+        if chapters and (
+            not chapters[0]["content"].strip()
+            or chapters[0]["content"].strip() == f"# {book_title}"
+        ):
+            chapters = chapters[1:]
+
+        # Save chapters to files
+        for i, chapter in enumerate(chapters, 1):
+            # Extract chapter title, handling colons in titles
+            chapter_title = chapter["title"]
+            if ":" in chapter_title:
+                chapter_title = chapter_title.split(":", 1)[1].strip()
+
+            # Generate filename with special characters preserved but safe
+            filename = sanitize_filename(chapter_title)
+            if not filename:  # Fallback if title produces empty filename
+                filename = f"chapter_{i}"
+
+            # Add hyphens between words for better readability
+            filename = re.sub(r"([a-z])([A-Z])", r"\1-\2", filename)
+            filename = filename.replace(" ", "-")
+            filename = filename.replace("_", "-")  # Convert underscores to hyphens
+
+            # Save file path
+            chapter["file_path"] = os.path.join(self.output_dir, f"{filename}.txt")
+
+            # Save content to file
+            os.makedirs(self.output_dir, exist_ok=True)
+            with open(chapter["file_path"], "w") as f:
+                f.write(chapter["content"])
+
+        return chapters
+
+    def process_chapters(self, chapters: List[Dict[str, str]]) -> ProcessingResult:
         """
         Process multiple chapters into audio files.
 
         Args:
-            chapters: List of chapter dictionaries with title and content
-            output_dir: Directory to save audio files
+            chapters: List of chapter info dictionaries
 
         Returns:
-            List of paths to generated audio files
+            ProcessingResult with status and output files
         """
-        audio_files: List[Path] = []
-        for chapter in chapters:
-            # TODO: Implement chapter processing
-            pass
-        return audio_files
+        # Placeholder for actual TTS processing
+        return "", None

@@ -59,20 +59,16 @@ class MarkdownCleaner(ContentProcessor):
         """Add proper spacing between paragraphs."""
         lines = content.split("\n")
         result = []
+        last_line = ""
 
-        for i, line in enumerate(lines):
+        for line in lines:
             line = line.rstrip()
             if not line:
-                result.append("")
-                continue
-
-            is_special = line.strip().startswith(("#", "*", "-", "+"))
-            next_is_empty = (i + 1 >= len(lines)) or not lines[i + 1].strip()
-
-            if is_special or next_is_empty:
-                result.append(line)
+                if last_line:
+                    result.append("")
             else:
-                result.append(line + "\n")
+                result.append(line)
+            last_line = line
 
         return "\n".join(result)
 
@@ -123,6 +119,7 @@ class TTSPreprocessor(ContentProcessor):
         content = re.sub(r"\*([^*]+)\*", r"\1", content)
         content = re.sub(r"__([^_]+)__", r"\1", content)
         content = re.sub(r"_([^_]+)_", r"\1", content)
+        content = re.sub(r"`([^`]+)`", r"\1", content)
 
         # Clean up various markers and formatting
         content = re.sub(r"\[\^[^\]]+\]", "", content)
@@ -142,8 +139,11 @@ class TTSPreprocessor(ContentProcessor):
         content = re.sub(r"\\$", "", content, flags=re.MULTILINE)
         content = re.sub(r"  +", " ", content)
         content = re.sub(r"\n{3,}", "\n\n", content)
+        content = re.sub(r"\s+$", "", content, flags=re.MULTILINE)
+        content = content.strip()
+        content = content.rstrip()
 
-        return content.strip()
+        return content
 
 
 class ChapterSplitter:
@@ -164,28 +164,34 @@ class ChapterSplitter:
         lines = content.split("\n")
         current_chapter: List[str] = []
         current_title = ""
+        found_first_header = False
 
         for line in lines:
             if line.startswith("#"):  # Header found
+                if line.startswith("# "):  # Top-level header (book title)
+                    if not found_first_header:
+                        found_first_header = True
+                        continue
                 if current_chapter:  # Save previous chapter
-                    chapters.append(
-                        {
-                            "title": current_title or "Untitled Chapter",
-                            "content": "\n".join(current_chapter).strip(),
-                        }
-                    )
+                    chapter_content = "\n".join(current_chapter).strip()
+                    if chapter_content:  # Only add non-empty chapters
+                        chapters.append(
+                            {
+                                "title": current_title or book_title,
+                                "content": chapter_content,
+                            }
+                        )
                     current_chapter = []
                 current_title = line.lstrip("#").strip()
             current_chapter.append(line)
 
         # Add the last chapter
         if current_chapter:
-            chapters.append(
-                {
-                    "title": current_title or "Untitled Chapter",
-                    "content": "\n".join(current_chapter).strip(),
-                }
-            )
+            chapter_content = "\n".join(current_chapter).strip()
+            if chapter_content:  # Only add non-empty chapters
+                chapters.append(
+                    {"title": current_title or book_title, "content": chapter_content}
+                )
 
         # If no chapters were found, treat the entire content as one chapter
         if not chapters:
