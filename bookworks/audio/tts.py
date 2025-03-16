@@ -64,6 +64,7 @@ class TTSProcessor:
             chapters = chapters[1:]
 
         # Save chapters to files
+        os.makedirs(self.output_dir, exist_ok=True)
         for i, chapter in enumerate(chapters, 1):
             # Extract chapter title, handling colons in titles
             chapter_title = chapter["title"]
@@ -84,7 +85,6 @@ class TTSProcessor:
             chapter["file_path"] = os.path.join(self.output_dir, f"{filename}.txt")
 
             # Save content to file
-            os.makedirs(self.output_dir, exist_ok=True)
             with open(chapter["file_path"], "w") as f:
                 f.write(chapter["content"])
 

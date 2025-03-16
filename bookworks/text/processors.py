@@ -141,7 +141,6 @@ class TTSPreprocessor(ContentProcessor):
         content = re.sub(r"\n{3,}", "\n\n", content)
         content = re.sub(r"\s+$", "", content, flags=re.MULTILINE)
         content = content.strip()
-        content = content.rstrip()
 
         return content
 
