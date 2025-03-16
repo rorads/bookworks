@@ -2,7 +2,7 @@ import pytest
 from app import app
 import os
 import shutil
-from bookworks.md_publish import UPLOAD_FOLDER
+from bookworks.core.publisher import UPLOAD_FOLDER
 import logging
 
 # Set up logging

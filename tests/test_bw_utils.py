@@ -3,7 +3,7 @@ Tests for the bookworks utility functions.
 """
 
 import os
-from bookworks.bw_utils import (
+from bookworks.utils.helpers import (
     sanitize_filename,
     clean_markdown_content,
     run_pandoc_command,

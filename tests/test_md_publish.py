@@ -5,8 +5,8 @@ Tests for the markdown to epub conversion functionality.
 import pytest
 import os
 import shutil
-from bookworks.bw_utils import sanitize_filename
-from bookworks.md_publish import (
+from bookworks.utils.helpers import sanitize_filename
+from bookworks.core.publisher import (
     process_markdown_content,
     process_markdown_file,
     UPLOAD_FOLDER,
