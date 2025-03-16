@@ -1,0 +1,24 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Whenever you're writing python in the main .bookworks/ directory, be sure to make sure the python you write is correct and well written, and remember to test your code.
+
+**Formatting and Type Checking**
+
+You can do this by calling:
+
+`ruff check <the file you just edited dot py>`
+
+and
+
+`mypy <the file you just edited dot py --follow-imports skip`
+
+If you're keen to ensure you're file integrates well, you can run `mypy .` but know that you might be shown issues which aren't a direct result of your work. (This shouldn't be the case in a well maintained repo, but it could happen). If this is the case, simply alert your user but don't go on a detour to fix unles explicitly asked.
+
+**Testing**
+
+If you're refactoring, or writing new code which should replace old code, undertake the integration work required and then run `make test` from the root directory. You don't need to do this if working on experimentation code in the ./experiments folder.
+
+Remember - tests should drive development to the extent that reasonable code is written. Do not put any edgecases within the code itself simply to pass a test. If you're unsure, raise it with the user.
