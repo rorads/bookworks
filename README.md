@@ -7,15 +7,25 @@ A versatile suite of tools for converting and transforming books between differe
 ## Features
 
 ### Markdown to EPUB Conversion
-- Browser-based interface for easy file conversion
-- Command-line interface for automation and scripting
-- Fixes broken Markdown links that span multiple lines
-- Improves paragraph spacing for better readability
-- Creates EPUB files with proper chapter structure based on level-2 headings
-- Adds metadata (title, author, date) to the generated EPUB
-- Generates a table of contents (optional)
-- Supports custom author attribution
-- Debug mode for troubleshooting
+
+Note: This project has been refactored. The functionality for converting Markdown to EPUB has been consolidated into a new publisher module located at `bookworks/core/publisher.py`. The previous CLI interface (`bookworks.md_publish`) has been removed. Instead, use the following example in your Python scripts:
+
+Example Usage:
+```python
+from bookworks.core.publisher import process_markdown_file
+
+output_file, error = process_markdown_file("document.md", author="John Smith")
+if error:
+    print("Error:", error)
+else:
+    print("Generated EPUB file at:", output_file)
+```
+
+Function Options:
+- filepath: Path to the Markdown file to process.
+- author: Custom author name (default: "Author Not Specified").
+- debug: If True, retains intermediate files for debugging (default: False).
+- toc: Include a table of contents (default: True).
 
 ### Audiobook Generation
 - Convert markdown content into high-quality audio segments
@@ -184,36 +194,7 @@ uv run python -m bookworks.md_publish document.md --debug
 
 ### Audiobook Generation
 
-The project includes tools to prepare markdown content for Text-to-Speech processing.
-
-Basic usage:
-```bash
-uv run python -m bookworks.clean_for_tts input.md
-```
-
-#### Command-line Options
-
-- `input_file`: The Markdown file to process
-- `--output-dir`: Directory to store processed files (default: "./output")
-- `--chunk-size`: Maximum size of chapter chunks in characters (default: 4000)
-- `--debug`: Enable debug output
-
-#### Examples
-
-1. Clean markdown for TTS with default settings:
-```bash
-uv run python -m bookworks.clean_for_tts document.md
-```
-
-2. Clean markdown with custom output directory:
-```bash
-uv run python -m bookworks.clean_for_tts document.md --output-dir "./tts-ready"
-```
-
-3. Clean markdown with custom chunk size:
-```bash
-uv run python -m bookworks.clean_for_tts document.md --chunk-size 5000
-```
+Note: The command-line tool for Audiobook Generation has been removed as part of the recent refactor. For preparing markdown content for TTS processing, please use the web interface available at the `/audiobook` endpoint.
 
 ## Experimentation Framework
 

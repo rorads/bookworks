@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, send_file, flash
 import os
-from bookworks.md_publish import process_markdown_content, UPLOAD_FOLDER
+from bookworks.core.publisher import process_markdown_content, UPLOAD_FOLDER
 import logging
 from typing import Any
 
